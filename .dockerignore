@@ -1,0 +1,6 @@
+.git/               # Exclude repository history
+.github/            # Exclude CI workflow files
+.venv/              # Exclude the local virtual environment
+__pycache__/        # Exclude Python bytecode caches
+.pytest_cache/      # Exclude test caches
+.env                # Never bake local environment secrets into the image
