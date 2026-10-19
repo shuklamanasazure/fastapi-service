@@ -14,7 +14,7 @@ COPY --chown=appuser:appuser app/ ./app/  # Copy application source with ownersh
 
 USER 10001                              # Run the process as a non-root user
 
-EXPOSE 8000                             # Document the application port
+EXPOSE 8001                             # Document the application port
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8001"]
 # Start Uvicorn and listen on all container interfaces
