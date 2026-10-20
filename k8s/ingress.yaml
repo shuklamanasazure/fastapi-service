@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fastapi-service
+spec:
+  rules:
+  - host: "fastapi-service.test.com"
+    http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: fastapi-service
+              port:
+                number: 8080
