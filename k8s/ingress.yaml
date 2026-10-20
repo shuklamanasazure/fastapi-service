@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: fastapi-service
 spec:
+  ingressClassName: nginx
   rules:
   - host: "fastapi-service.test.com"
     http:
