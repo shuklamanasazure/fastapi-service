@@ -7,12 +7,14 @@ app = FastAPI(title="FastAPI Service")  # Create the API application
 class AppInfo(BaseModel):  # Define the response schema
     name: str  # Application name
     environment: str  # Deployment environment
+    message: str # Deployment message
 
 @app.get("/api/v1/info", response_model=AppInfo)  # Register an information endpoint
 def get_info():
     return AppInfo(  # Return structured application metadata
         name="fastapi-service",
         environment=os.getenv("APP_ENV", "local"),  # Use environment configuration
+        message="Deployed successfully :)"
     )
 
 @app.get("/api/v1/healthz")  # Register a lightweight health endpoint
