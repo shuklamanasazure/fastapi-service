@@ -42,7 +42,7 @@ jobs:
         shell: bash
         run: |
           echo ${{needs.ci.outputs.commit_id}}
-          pip install yq
+          python3 -mpip install yq
           yq -Yi '.image.tag = "${{needs.ci.outputs.commit_id}}"' charts/fastapi-service/values.yaml
 
       - name: Commit changes
