@@ -14,7 +14,7 @@ def get_info():
     return AppInfo(  # Return structured application metadata
         name="fastapi-service",
         environment=os.getenv("APP_ENV", "local"),  # Use environment configuration
-        message="Deployed successfully :) via GH actions - 1 pip fix in cd pipeline pip installed Added steps in ci.yaml for python steup Fixed write permission"
+        message="Deployed successfully :) via GH actions - Fixed write permission & Application name",
     )
 
 @app.get("/api/v1/healthz")  # Register a lightweight health endpoint

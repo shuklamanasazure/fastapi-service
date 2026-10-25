@@ -10,7 +10,7 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -80,4 +80,4 @@ jobs:
             --grpc-web \
             --username admin \
             --password  ${{ secrets.ARGOCD_PASSWORD }}
-          argocd app sync python-app
+          argocd app sync argocd/fastapi-service
