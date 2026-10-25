@@ -38,6 +38,17 @@ jobs:
 
       - uses: actions/checkout@v3
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify Python and pip
+        run: |
+          which python
+          python --version
+          python -m pip --version
+
       - name: Modify values file
         shell: bash
         run: |
