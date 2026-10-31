@@ -1,0 +1,12 @@
+site_name: 'fastapi-service'
+site_description: 'Main documentation for the FastAPI service'
+repo_url: https://github.com/shuklamanasazure/fastapi-service.git
+edit_uri: edit/main/docs
+
+plugins:
+  - techdocs-core
+
+# For sidebar navigation on https://backstage.io/, see `microsite/sidebars.json`
+nav:
+  - Overview:
+      - Getting started: 'docs/index.md'

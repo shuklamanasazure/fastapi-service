@@ -1,13 +1,13 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: fatsapi-service
+  name: fatsapi-service                   # The name of the component, which is used as a unique identifier within Backstage.
   description: Local Fast API service.
   # Example for optional annotations
   annotations:
-     github.com/project-slug: shuklamanasazure/fastapi-service
-  #   backstage.io/techdocs-ref: dir:.
+     github.com/project-slug: shuklamanasazure/fastapi-service # The GitHub repository where the source code for this component is stored.
+     backstage.io/techdocs-ref: dir:.
 spec:
   type: service
-  owner: development-team
+  owner: development-team # Name of The Group or User responsible for this component. This is used to determine who to contact for support or questions about the component.
   lifecycle: experimental
