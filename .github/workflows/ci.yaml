@@ -1,5 +1,6 @@
 name: ci
 
+# Run this workflow when files under app/ change in a push to main.
 on:
   push:
     paths:
@@ -7,52 +8,64 @@ on:
     branches:
       - main
 
-
+# Allow the CD job to push the updated Helm values file back to the repository.
 permissions:
   contents: write
 
 jobs:
+  # CI job: build the application image and publish it to Docker Hub.
   ci:
     runs-on: ubuntu-latest
     steps:
 
+      # Create a six-character commit ID for use as the Docker image tag.
       - name: Shorten commit id
         shell: bash
         run: |
           echo "COMMIT_ID=${GITHUB_SHA::6}" >> "$GITHUB_ENV"
+      # Authenticate Docker so the following step can push the image.
       -
         name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # Build the Docker image from the repository and push it tagged with the short commit ID.
       -
         name: Build and push
         uses: docker/build-push-action@v6
         with:
           push: true
           tags: shuklamanasazure/fastapi-service:${{ env.COMMIT_ID }}
+    # Make the image's commit tag available to the dependent CD job.
     outputs:
       commit_id: ${{ env.COMMIT_ID }}
 
+  # CD job: update the Helm image tag in Git, then ask Argo CD to sync the application.
   cd:
+    # Wait for CI to finish so its image tag is available before deploying.
     needs: ci
+    # Run deployment commands on the configured self-hosted runner.
     runs-on: self-hosted
     steps:
 
+      # actions/checkout@v3 clones the repository onto the runner for the file update and commit.
       - uses: actions/checkout@v3
 
+      # Install Python 3.12, used to install and run the yq YAML editing tool below.
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
+      # Print the selected Python and pip locations and versions for verification.
       - name: Verify Python and pip
         run: |
           which python
           python --version
           python -m pip --version
 
+      # Install yq and update the Helm chart's image tag to the image built by CI.
       - name: Modify values file
         shell: bash
         run: |
@@ -60,11 +73,13 @@ jobs:
           python3 -mpip install yq
           yq -Yi '.image.tag = "${{needs.ci.outputs.commit_id}}"' charts/fastapi-service/values.yaml
 
+      # Commit the changed Helm values file so the repository records the new image tag.
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
           message: 'Updates values.yaml with commit ${{needs.ci.outputs.commit_id}}'
 
+      # Download the Argo CD CLI, make it executable, and install it on the runner's PATH.
       - name: Install argocd
         shell: bash
         run: |
@@ -72,6 +87,7 @@ jobs:
           chmod +x argocd
           sudo mv ./argocd /usr/local/bin/argocd
 
+      # Log in to Argo CD using the configured secret, then sync the fastapi-service application.
       - name: Argocd app sync
         shell: bash
         run: |
@@ -81,3 +97,9 @@ jobs:
             --username admin \
             --password  ${{ secrets.ARGOCD_PASSWORD }}
           argocd app sync argocd/fastapi-service
+
+# Few errors deal during the pipeline execution:
+# 1. Permission denied error while writing to the values.yaml file. 
+# 2. Application name was wrong suring the argocd app sync the /api/v1/info endpoint.
+# 3. The commit id was not being passed to the argocd app sync command, so the application was not being updated with the new image tag.
+# 4. pip was not installed on the self-hosted runner, so the yq command was failing to update the values.yaml file.

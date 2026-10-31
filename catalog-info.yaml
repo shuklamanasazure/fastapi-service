@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: fatsapi-service
+  description: Local Fast API service.
+  # Example for optional annotations
+  annotations:
+     github.com/project-slug: shuklamanasazure/fastapi-service
+  #   backstage.io/techdocs-ref: dir:.
+spec:
+  type: service
+  owner: development-team
+  lifecycle: experimental
